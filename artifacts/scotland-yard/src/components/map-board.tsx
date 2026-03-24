@@ -227,22 +227,7 @@ export function MapBoard({ game, myPlayer, onMove, useBlackCard = false, useDoub
     return t.charAt(0).toUpperCase() + t.slice(1);
   };
 
-  // ── SVG: draw thin colored lines from current station → valid destinations ──
-  // (only when it's my turn, only for routes I can actually use)
-  const validMoveLines = useMemo(() => {
-    if (!isMyTurn || isSpawnTurn || !myPlayer?.position) return null;
-    const fromStation = stations[myPlayer.position];
-    if (!fromStation) return null;
 
-    return validMoves.map(({ stationId, transports }) => {
-      const toStation = stations[stationId];
-      if (!toStation) return null;
-      // Pick the "highest priority" transport color for the line
-      const priority: TransportType[] = ['underground', 'boat', 'bus', 'taxi', 'black'];
-      const t = priority.find(p => transports.includes(p)) ?? transports[0];
-      return { fromStation, toStation, transport: t, stationId };
-    }).filter(Boolean);
-  }, [isMyTurn, isSpawnTurn, myPlayer?.position, validMoves]);
 
   const realQ  = game.mrxStartQuarter ?? null;
   const decoyQ = game.decoyQuarter    ?? null;
@@ -344,28 +329,7 @@ export function MapBoard({ game, myPlayer, onMove, useBlackCard = false, useDoub
           draggable={false}
         />
 
-        {/* ── SVG layer: valid-move route lines + optional hover indicator ─── */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-          {/* Draw thin colored lines from current position → valid destinations */}
-          {validMoveLines?.map(item => {
-            if (!item) return null;
-            const { fromStation, toStation, transport, stationId } = item;
-            const isHovered = hoveredStation === stationId;
-            return (
-              <line
-                key={`vml-${stationId}`}
-                x1={fromStation.x} y1={fromStation.y}
-                x2={toStation.x}   y2={toStation.y}
-                stroke={TRANSPORT_COLORS[transport] ?? '#fff'}
-                strokeWidth={isHovered ? 0.6 : 0.35}
-                strokeOpacity={isHovered ? 0.9 : 0.55}
-                strokeDasharray={transport === 'underground' ? '0.8 0.4' : transport === 'boat' ? '1 0.5' : undefined}
-                strokeLinecap="round"
-                style={{ vectorEffect: 'non-scaling-stroke' } as React.CSSProperties}
-              />
-            );
-          })}
-        </svg>
+
 
         {/* ── Station nodes ─────────────────────────────────────────────────── */}
         {Object.entries(stations).map(([idStr, s]) => {

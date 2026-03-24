@@ -93,7 +93,7 @@ function advanceTurn(
   let round = currentRound;
   if (turnIndex === 0) round = currentRound + 1;
 
-  // Skip detectives with no legal moves (due to empty tickets).
+  // Skip detectives with no legal moves (due to empty tickets) or if a double move is active.
   // Run at most turnOrder.length times to avoid infinite loops.
   for (let guard = 0; guard < turnOrder.length; guard++) {
     const playerId = turnOrder[turnIndex];
@@ -101,6 +101,14 @@ function advanceTurn(
     if (!player) break;
     // Mr. X never skips; unspawned detectives (position === null) never skip.
     if (player.role === "mrx" || player.position === null) break;
+
+    // Skip detectives if a double move is active on any player
+    const isDoubleMoveActive = players.some(p => p.role === "mrx" && p.doubleMoveActive === true);
+    if (isDoubleMoveActive) {
+      turnIndex = (turnIndex + 1) % turnOrder.length;
+      if (turnIndex === 0) round = round + 1;
+      continue;
+    }
 
     const legalMoves = getValidMoves(player.position, player.tickets, false);
     if (legalMoves.length > 0) break; // has moves — stop skipping
@@ -276,14 +284,20 @@ export function applyMove(
       };
     }
 
+    // Advance turn for the first double move
+    // detectives will be auto-skipped in advanceTurn since doubleMoveActive is now true
+    const advanceFromRound = game.round;
+    const { turnIndex: newTurnIndex, round: newRound, currentTurn: newCurrentTurn } =
+      advanceTurn(game.turnIndex, advanceFromRound, game.turnOrder, newPlayers);
+
     return {
       game: {
         ...game,
         players: newPlayers,
         mrxMoveLog,
-        // Keep game.round unchanged — both halves of a double move share the
-        // same round number so the logbook groups them together in one row.
-        currentTurn: playerId, // stay on Mr. X
+        round: newRound,
+        turnIndex: newTurnIndex,
+        currentTurn: newCurrentTurn,
       },
     };
   }
