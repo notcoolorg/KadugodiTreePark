@@ -1,7 +1,6 @@
 services:
   - type: web
     name: api-server
-    plan: free
     runtime: node
     rootDir: artifacts/api-server
     buildCommand: |
@@ -18,7 +17,6 @@ services:
   - type: web
     runtime: static
     name: scotland-yard-frontend
-    plan: free
     rootDir: artifacts/scotland-yard
     buildCommand: |
       pnpm install --no-frozen-lockfile 
