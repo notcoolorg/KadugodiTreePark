@@ -390,7 +390,7 @@ export default function Home() {
                         No public operations found. Create one!
                       </p>
                     )}
-                    {publicLobbies?.map((lobby) => (
+                    {(Array.isArray(publicLobbies) ? publicLobbies : []).map((lobby) => (
                       <div
                         key={lobby.roomCode}
                         className="flex items-center justify-between rounded-lg border border-border/50 p-3 bg-muted/10 hover:bg-muted/20 transition-colors"
