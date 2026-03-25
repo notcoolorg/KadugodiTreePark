@@ -1,13 +1,9 @@
 module.exports = async (req, res) => {
-  try {
-    const app = require("../dist/index.cjs");
-    app(req, res);
-  } catch (error) {
-    console.error("Error loading app:", error);
-    res.status(500).json({ 
-      error: "Internal Server Error",
-      message: error.message 
-    });
-  }
+  res.setHeader("Content-Type", "application/json");
+  res.status(200).json({ 
+    status: "ok",
+    environment: "serverless",
+    timestamp: new Date().toISOString()
+  });
 };
 
