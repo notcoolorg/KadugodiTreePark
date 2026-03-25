@@ -5,6 +5,8 @@ dist
 tmp
 out-tsc
 *.tsbuildinfo
+# Allow dist in api-server for Vercel deployment
+!artifacts/api-server/dist/
 .expo
 .expo-shared
 
