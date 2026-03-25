@@ -57,7 +57,7 @@ export default defineConfig({
     },
     proxy: {
       "/api": {
-        target: `https://ktpapi.onrender.com/`,
+        target: `https://ktpapi.onrender.com`,
         changeOrigin: true,
         ws: true,
       },
