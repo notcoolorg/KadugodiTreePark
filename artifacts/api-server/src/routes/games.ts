@@ -136,15 +136,15 @@ router.get("/games/public", async (_req, res): Promise<void> => {
     .where(and(eq(gamesTable.status, "lobby"), eq(gamesTable.isPublic, true)));
 
   const games = rows
-    .filter(r => (r.players as Player[]).length < 8)
-    .map(r => ({
+    .filter((r: any) => (r.players as Player[]).length < 8)
+    .map((r: any) => ({
       roomCode:    r.roomCode,
       playerCount: (r.players as Player[]).length,
       maxPlayers:  8,
       players:     (r.players as Player[]).map(p => ({ name: p.name })),
       createdAt:   r.createdAt,
     }))
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   res.json(games);
 });
